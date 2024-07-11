@@ -17,24 +17,6 @@ mongoose
     console.log("MongoDB Connected...");
   });
 
-const tourSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Tour name is required"],
-    unique: true,
-  },
-  rating: {
-    type: Number,
-    default: 4.5,
-  },
-  price: {
-    type: Number,
-    required: [true, "Price is required"],
-  },
-});
-
-const Tour = mongoose.model("Tour", tourSchema); //collection
-
 const document = new Tour({ name: "Down South", rating: 4.9, price: 4500 });
 
 document

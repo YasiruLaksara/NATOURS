@@ -1,8 +1,10 @@
 const fs = require("fs");
+const Tour = require("./../models/tourModel");
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours.json`)
-); //convert to arrays of javascript objects
+//////This only used for our testing perposes
+// const tours = JSON.parse(
+//   fs.readFileSync(`${__dirname}/../dev-data/data/tours.json`)
+// ); //convert to arrays of javascript objects
 
 exports.getAllTours = (req, res) => {
   res
