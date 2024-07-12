@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify"); //before that npm i slugify //not essential//This is for middlwares
+const validator = require("validator");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -7,6 +8,8 @@ const tourSchema = new mongoose.Schema(
       type: String,
       required: [true, "Tour name is required"],
       unique: true,
+      maxlength: [50, "Tour name is required maximum length of 50 characters"],
+      minlenght: [5, "Tour name is required minimum length of 5 characters"],
     },
 
     slug: String,
@@ -32,6 +35,8 @@ const tourSchema = new mongoose.Schema(
     ratingAverage: {
       type: Number,
       default: 4.5,
+      min: [1, "Rating must be above 1.0"],
+      max: [5, "Rating must be below 5.0"],
     },
 
     ratingsQuantity: {
@@ -45,6 +50,11 @@ const tourSchema = new mongoose.Schema(
 
     priceDiscount: {
       type: Number,
+      validate: function (val) {
+        //custom Validation
+        return val < this.price; //this only points to the current document creation
+      },
+      message: "Discount Price must below the regular Price",
     },
 
     summary: {
