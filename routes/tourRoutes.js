@@ -3,10 +3,14 @@ const tourController = require("./../controllers/tourController");
 const router = express.Router();
 
 //middlware
-router.param("x", (req, res, next, val) => {
-  console.log(`Tour Id is: ${val}`);
-  next();
-});
+// router.param("x", (req, res, next, val) => {
+//   console.log(`Tour Id is: ${val}`);
+//   next();
+// });
+
+router
+  .route("/top-5-cheap")
+  .get(tourController.aliasTopTours, tourController.getAllTours);
 
 router
   .route("/")

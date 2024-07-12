@@ -6,22 +6,63 @@ const Tour = require("./../models/tourModel");
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours.json`)
 // ); //convert to arrays of javascript objects
 
+exports.aliasTopTours = (req, res, next) => {
+  req.query.limit = "5";
+  req.query.sort = "-ratingsAverage,price";
+  req.query.fields = "name,price,ratingsAverage,difficulty";
+  next();
+};
+
 exports.getAllTours = async (req, res) => {
   try {
     //Building Querry
+    //1 A)Filtering
     const queryObj = { ...req.query };
     // console.log(queryObj);
     const excludeFields = ["page", "sort", "limit", "fields"];
     excludeFields.forEach((el) => delete queryObj[el]);
 
     console.log(req.query);
-    //Building Advanced Query(gte/lte/gt/lt)
+    //1 B)Advanced Filtering
 
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|lte|gt|lt)\b/g, (match) => `$${match}`);
     console.log(JSON.parse(queryStr));
 
-    const query = Tour.find(JSON.parse(queryStr)); //sort and find using parameters
+    let query = Tour.find(JSON.parse(queryStr)); //sort and find using parameters
+
+    //2)Sorting
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      console.log(sortBy);
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort("-createdAt");
+    }
+
+    //(sort('price ratingsAverage')
+
+    //3)Field Limiting
+
+    if (req.query.fields) {
+      const fields = req.query.fields.split(",").join(" ");
+      query = query.select(fields);
+    } else {
+      query = query.select("-__v");
+    }
+
+    //4)pagination  (no of documents for each page and what is the page i need to view )
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments();
+      if (skip > numTours) throw new Error("This page does not exist");
+    }
 
     //Execute Querry
     const tours = await query;
@@ -31,7 +72,7 @@ exports.getAllTours = async (req, res) => {
       .status(200)
       .json({ status: "success", results: tours.length, data: { tours } });
   } catch (err) {
-    res.status(500).json({ status: "error", message: err.message });
+    res.status(404).json({ status: "error", message: err.message });
   }
 };
 
