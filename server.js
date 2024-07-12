@@ -17,17 +17,6 @@ mongoose
     console.log("MongoDB Connected...");
   });
 
-const document = new Tour({ name: "Down South", rating: 4.9, price: 4500 });
-
-document
-  .save()
-  .then((doc) => {
-    console.log(doc);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
 const port = 3000;
 app.listen(port, () => {
   console.log(`App is running on the ${port}...`);
