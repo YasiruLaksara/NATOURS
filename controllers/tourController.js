@@ -10,7 +10,7 @@ exports.getAllTours = async (req, res) => {
   try {
     //Building Querry
     const queryObj = { ...req.query };
-    console.log(queryObj);
+    // console.log(queryObj);
     const excludeFields = ["page", "sort", "limit", "fields"];
     excludeFields.forEach((el) => delete queryObj[el]);
 
