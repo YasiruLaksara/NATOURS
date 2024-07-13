@@ -18,6 +18,8 @@ app.use(express.static(`${__dirname}/public`)); //middleware to serve static fil
 
 app.use((req, res, next) => {
   console.log("Hello from the middleware");
+  req.requestTime = new Date().toISOString();
+  console.log(req.headers);
   next();
 });
 
