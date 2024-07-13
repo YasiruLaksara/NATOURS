@@ -7,6 +7,15 @@ const app = express();
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 
+const AppError = require("./utils/appError");
+const globalErrorHandler = require("./controllers/errorController");
+
+app.all("*", (req, res, next) => {
+  next(new AppError(`Cant Find ${req.originalURL} on this Server`));
+});
+
+app.use(globalErrorHandler);
+
 //middlwares
 
 app.use(morgan("dev")); //middleware
